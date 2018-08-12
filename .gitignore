@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 /target/
 !.mvn/wrapper/maven-wrapper.jar
+=======
+.gradle
+/build/
+!gradle/wrapper/gradle-wrapper.jar
+>>>>>>> ea34971d1ca663c257fe95f4d53ccacad8ea9a41
 
 ### STS ###
 .apt_generated
@@ -15,10 +21,17 @@
 *.iws
 *.iml
 *.ipr
+<<<<<<< HEAD
 
 ### NetBeans ###
 /nbproject/private/
 /build/
+=======
+/out/
+
+### NetBeans ###
+/nbproject/private/
+>>>>>>> ea34971d1ca663c257fe95f4d53ccacad8ea9a41
 /nbbuild/
 /dist/
 /nbdist/
