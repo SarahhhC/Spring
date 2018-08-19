@@ -14,17 +14,33 @@
 	</style>
 </head>
 <body>
-	<h1 th:text="#{content.title}">Helo page</h1>
-	<p th:text="${msg}"></p>
+	<h1 th:text="#{content.title}">Hello page</h1>
+	<p  th:text="${msg}"></p>
+	<ol id="obj"></ol>
 	<table>
-	<tr><th>ID</th><th>이름</th><th>메일</th><th>연령</th><th>메모(tel)</th></tr>
-	<tr th:each="obj : ${datalist}">
-		<td th:text="${obj.id}"></td>
-		<td th:text="${obj.name}"></td>
-		<td th:text="${obj.mail}"></td>
-		<td th:text="${obj.age}"></td>
-		<td th:text="${obj.memo}"></td>
-	</tr>
-	</table>
+  <tr><th>ID</th><th>이름</th><th>메일</th><th>연령</th><th>메모(tel)</th></tr>
+  <tr th:each="obj : ${datalist}">
+    <td th:text="${obj.id}"></td>
+    <td th:text="${obj.name}"></td>
+    <td th:text="${obj.mail}"></td>
+    <td th:text="${obj.age}"></td>
+    <td th:text="${obj.memo}"></td>
+  </tr>
+  <tr>
+    <td colspan="5">
+      <table class="navi">
+        <tr>
+          <td><div style="text-align: left;">
+              <a th:href="${#myTLHelper.prevUrl(pagenumber)}">← Prev</a>
+            </div></td>
+          <td><div style="text-align: center;">page</div></td>
+          <td><div style="text-align: right;">
+              <a th:href="${#myTLHelper.nextUrl(pagenumber)}">Next→</a>
+            </div></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
 </body>
 </html>

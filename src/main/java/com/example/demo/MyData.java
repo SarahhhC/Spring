@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -31,6 +32,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 		query="from MyData where age > :min and age < :max"
 	)
 })
+//@XmlRootElement
 public class MyData {
 
 	@OneToMany(cascade=CascadeType.ALL)

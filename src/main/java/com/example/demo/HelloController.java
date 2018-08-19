@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -27,14 +28,11 @@ public class HelloController {
 	@Autowired
 	MyDataRepository repository;
 	
-	@PersistenceContext
-	EntityManager entityManager;
-	
-	MyDataDaoImpl dao;
+	@Autowired
+	private MyDataService service;
 	
 	@PostConstruct
 	public void init(){
-		dao = new MyDataDaoImpl(entityManager);
 		MyData d1 = new MyData();
 		d1.setName("tuyano");
 		d1.setAge(123);
@@ -62,7 +60,7 @@ public class HelloController {
 		mav.setViewName("index");
 		mav.addObject("msg","this is sample content.");
 		mav.addObject("formModel",mydata);
-		Iterable<MyData> list = dao.getAll();
+		List<MyData> list = service.getAll();
 		mav.addObject("datalist",list);
 		return mav;
 	}
@@ -130,7 +128,7 @@ public class HelloController {
 		mav.addObject("title","Find Page");
 		mav.addObject("msg","MyData의 예제입니다.");
 		mav.addObject("value","");
-		Iterable<MyData> list = dao.getAll(); 
+		List<MyData> list = service.getAll();
 		mav.addObject("datalist", list);
 		return mav;
 	}
@@ -146,10 +144,38 @@ public class HelloController {
 			mav.addObject("title","Find result");
 			mav.addObject("msg","「" + param + "」의 검색 결과");
 			mav.addObject("value",param);
-			List<MyData> list = dao.find(param);
+			List<MyData> list = service.find(param);
 			mav.addObject("datalist", list);
 		}
 		return mav;
 	}
 
+	@Autowired
+	MyDataBean myDataBean;
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public ModelAndView indexById(@PathVariable long id,
+			ModelAndView mav) {
+		mav.setViewName("pickup");
+		mav.addObject("title","Pickup Page");
+		String table = "<table>"
+				+ myDataBean.getTableTagById(id)
+				+ "</table>";
+		mav.addObject("msg","pickup data id = " + id);
+		mav.addObject("data",table);
+		return mav;
+	}
+	
+	@RequestMapping(value = "/page/{num}", 
+			method = RequestMethod.GET)
+	public ModelAndView page(@PathVariable Integer num, 
+			ModelAndView mav) {
+		Page<MyData> page = service.getMyDataInPage(num);
+		mav.setViewName("index");
+	    mav.addObject("title","Find Page");
+		mav.addObject("msg","MyData의 예제입니다.");
+		mav.addObject("pagenumber", num);
+		mav.addObject("datalist", page);
+	    return mav;
+	}
 }
