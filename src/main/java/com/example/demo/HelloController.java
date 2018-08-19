@@ -14,7 +14,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.example.demo.repositories.MyDataRepository;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class HelloController {
@@ -22,25 +27,31 @@ public class HelloController {
 	@Autowired
 	MyDataRepository repository;
 	
+	@PersistenceContext
+	EntityManager entityManager;
+	
+	MyDataDaoImpl dao;
+	
 	@PostConstruct
 	public void init(){
+		dao = new MyDataDaoImpl(entityManager);
 		MyData d1 = new MyData();
 		d1.setName("tuyano");
 		d1.setAge(123);
 		d1.setMail("kim@gilbut.co.kr");
-		d1.setMemo("090999999"); // ●
+		d1.setMemo("090999999");
 		repository.saveAndFlush(d1);
 		MyData d2 = new MyData();
 		d2.setName("lee");
 		d2.setAge(15);
 		d2.setMail("lee@flower");
-		d2.setMemo("080888888"); // ●
+		d2.setMemo("080888888");
 		repository.saveAndFlush(d2);
 		MyData d3 = new MyData();
 		d3.setName("choi");
 		d3.setAge(37);
 		d3.setMail("choi@happy");
-		d3.setMemo("070777777"); // ●
+		d3.setMemo("070777777");
 		repository.saveAndFlush(d3);
 	}
 	
@@ -51,7 +62,7 @@ public class HelloController {
 		mav.setViewName("index");
 		mav.addObject("msg","this is sample content.");
 		mav.addObject("formModel",mydata);
-		Iterable<MyData> list = repository.findAll();
+		Iterable<MyData> list = dao.getAll();
 		mav.addObject("datalist",list);
 		return mav;
 	}
@@ -112,4 +123,33 @@ public class HelloController {
 		repository.delete(id);
 		return new ModelAndView("redirect:/");
 	}
+	
+	@RequestMapping(value = "/find", method = RequestMethod.GET)
+	public ModelAndView find(ModelAndView mav) {
+		mav.setViewName("find");
+		mav.addObject("title","Find Page");
+		mav.addObject("msg","MyData의 예제입니다.");
+		mav.addObject("value","");
+		Iterable<MyData> list = dao.getAll(); 
+		mav.addObject("datalist", list);
+		return mav;
+	}
+
+	@RequestMapping(value = "/find", method = RequestMethod.POST)
+	public ModelAndView search(HttpServletRequest request,
+			ModelAndView mav) {
+		mav.setViewName("find");
+		String param = request.getParameter("fstr");
+		if (param == ""){
+			mav = new ModelAndView("redirect:/find");
+		} else {
+			mav.addObject("title","Find result");
+			mav.addObject("msg","「" + param + "」의 검색 결과");
+			mav.addObject("value",param);
+			List<MyData> list = dao.find(param);
+			mav.addObject("datalist", list);
+		}
+		return mav;
+	}
+
 }
